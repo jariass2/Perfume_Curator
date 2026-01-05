@@ -231,12 +231,12 @@
                     </p>
                 </div>
 
-                <div class="grid grid-cols-3 md:grid-cols-6 gap-3 max-w-5xl mx-auto mb-20">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-6xl mx-auto mb-20">
                     {% for nota in opciones.notas %}
                         <label class="group relative cursor-pointer block">
                             <input type="checkbox" name="notas_preferidas" value="{{ nota }}" class="peer sr-only">
-                            <div class="h-20 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center px-3">
-                                <span class="text-xs font-light text-gray-600 peer-checked:text-hermes-orange tracking-wide uppercase text-center transition-all duration-300">{{ nota }}</span>
+                            <div class="relative h-24 border border-gray-200 bg-white hover:border-hermes-orange hover:shadow-lg transition-all duration-300 peer-checked:border-t-4 peer-checked:border-t-hermes-orange peer-checked:border-x peer-checked:border-b peer-checked:border-gray-200 peer-checked:shadow-xl flex flex-col items-center justify-center p-4">
+                                <span class="text-sm font-light text-gray-700 peer-checked:text-hermes-orange tracking-[0.15em] uppercase text-center transition-all duration-300">{{ nota }}</span>
                             </div>
                         </label>
                     {% endfor %}
@@ -254,12 +254,12 @@
                     </p>
                 </div>
 
-                <div class="grid grid-cols-3 md:grid-cols-6 gap-3 max-w-5xl mx-auto mb-20">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-6xl mx-auto mb-20">
                     {% for nota in opciones.notas %}
                         <label class="group relative cursor-pointer block">
                             <input type="checkbox" name="notas_rechazadas" value="{{ nota }}" class="peer sr-only">
-                            <div class="h-20 border border-gray-300 bg-white hover:border-red-400 transition-all duration-300 peer-checked:border-red-500 peer-checked:bg-red-50 flex items-center justify-center px-3">
-                                <span class="text-xs font-light text-gray-600 peer-checked:text-red-600 tracking-wide uppercase text-center transition-all duration-300">{{ nota }}</span>
+                            <div class="relative h-24 border border-gray-200 bg-white hover:border-red-400 hover:shadow-lg transition-all duration-300 peer-checked:border-t-4 peer-checked:border-t-red-500 peer-checked:border-x peer-checked:border-b peer-checked:border-gray-200 peer-checked:shadow-xl flex flex-col items-center justify-center p-4">
+                                <span class="text-sm font-light text-gray-700 peer-checked:text-red-600 tracking-[0.15em] uppercase text-center transition-all duration-300">{{ nota }}</span>
                             </div>
                         </label>
                     {% endfor %}

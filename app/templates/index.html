@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section Hermès Style -->
+<section class="relative min-h-screen flex items-center justify-center bg-white">
+    <div class="max-w-5xl mx-auto px-12 lg:px-16 text-center">
+        <div class="mb-12">
+            <span class="inline-block text-[10px] font-light tracking-[0.3em] text-gray-400 uppercase">
+                Curaduría Olfativa
+            </span>
+        </div>
+
+        <h1 class="font-serif text-7xl md:text-8xl font-light text-hermes-black mb-10 leading-[1.1] tracking-tight">
+            Descubre<br>
+            <span class="text-hermes-orange font-normal">Tu Fragancia</span>
+        </h1>
+
+        <p class="text-lg md:text-xl text-gray-500 font-light mb-20 max-w-2xl mx-auto leading-relaxed">
+            Experiencia personalizada de selección olfativa
+        </p>
+
+        <div class="flex flex-col items-center justify-center gap-8">
+            {% if current_user.is_authenticated %}
+                <a href="#questionnaire" class="group inline-flex items-center justify-center px-12 py-4 text-xs font-light tracking-[0.2em] uppercase text-white bg-hermes-orange hover:bg-hermes-orange-dark transition-all duration-300">
+                    Comenzar
+                    <svg class="ml-3 w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </a>
+            {% else %}
+                <button onclick="showRegistrationModal()" class="group inline-flex items-center justify-center px-12 py-4 text-xs font-light tracking-[0.2em] uppercase text-white bg-hermes-orange hover:bg-hermes-orange-dark transition-all duration-300">
+                    Comenzar
+                    <svg class="ml-3 w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </button>
+            {% endif %}
+
+            <a href="/resultados" class="text-xs font-light tracking-[0.2em] uppercase text-gray-500 hover:text-hermes-orange transition-colors duration-300 border-b border-transparent hover:border-hermes-orange pb-1">
+                Explorar Colección
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Registration Modal Hermès Style -->
+<div id="registrationModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="relative bg-white border border-gray-200 max-w-md w-full mx-4 p-10 shadow-2xl">
+        <button onclick="closeRegistrationModal()" class="absolute top-6 right-6 text-gray-400 hover:text-hermes-orange transition-colors duration-300">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <h2 class="font-serif text-3xl font-light text-hermes-black mb-2 tracking-tight">
+            Bienvenido
+        </h2>
+        <p class="text-sm text-gray-500 mb-10 font-light">
+            Crea tu perfil para comenzar la experiencia personalizada
+        </p>
+
+        <form action="/register" method="POST" class="space-y-6">
+            <div>
+                <label class="block text-xs font-light tracking-[0.15em] uppercase text-gray-500 mb-2">Nombre</label>
+                <input type="text" name="nombre" required
+                       class="w-full px-4 py-3 bg-white border border-gray-300 text-hermes-black focus:border-hermes-orange focus:outline-none transition-colors duration-300">
+            </div>
+
+            <div>
+                <label class="block text-xs font-light tracking-[0.15em] uppercase text-gray-500 mb-2">Email</label>
+                <input type="email" name="email" required
+                       class="w-full px-4 py-3 bg-white border border-gray-300 text-hermes-black focus:border-hermes-orange focus:outline-none transition-colors duration-300">
+            </div>
+
+            <div>
+                <label class="block text-xs font-light tracking-[0.15em] uppercase text-gray-500 mb-2">Contraseña</label>
+                <input type="password" name="password" required
+                       class="w-full px-4 py-3 bg-white border border-gray-300 text-hermes-black focus:border-hermes-orange focus:outline-none transition-colors duration-300">
+            </div>
+
+            <div>
+                <label class="block text-xs font-light tracking-[0.15em] uppercase text-gray-500 mb-2">Confirmar Contraseña</label>
+                <input type="password" name="confirm_password" required
+                       class="w-full px-4 py-3 bg-white border border-gray-300 text-hermes-black focus:border-hermes-orange focus:outline-none transition-colors duration-300">
+            </div>
+
+            <button type="submit" class="w-full py-4 text-xs font-light tracking-[0.2em] uppercase text-white bg-hermes-orange hover:bg-hermes-orange-dark transition-all duration-300">
+                Crear Perfil
+            </button>
+
+            <p class="text-center text-xs text-gray-500 mt-6">
+                ¿Ya tienes cuenta?
+                <a href="/login" class="text-hermes-orange hover:text-hermes-orange-dark transition-colors duration-300">Inicia sesión</a>
+            </p>
+        </form>
+    </div>
+</div>
+
+<!-- Questionnaire Section Hermès Style -->
+{% if current_user.is_authenticated %}
+<section id="questionnaire" class="min-h-screen flex items-center justify-center bg-hermes-cream py-32">
+    <div class="max-w-4xl mx-auto px-12 lg:px-16 w-full">
+        <form id="perfumeForm" action="/resultados" method="POST" class="space-y-0">
+            <!-- Progress Indicator -->
+            <div class="mb-24">
+                <div class="flex items-center justify-center space-x-2">
+                    <div id="step-indicator-1" class="w-16 h-px bg-hermes-orange transition-all duration-500"></div>
+                    <div id="step-indicator-2" class="w-16 h-px bg-gray-300 transition-all duration-500"></div>
+                    <div id="step-indicator-3" class="w-16 h-px bg-gray-300 transition-all duration-500"></div>
+                    <div id="step-indicator-4" class="w-16 h-px bg-gray-300 transition-all duration-500"></div>
+                    <div id="step-indicator-5" class="w-16 h-px bg-gray-300 transition-all duration-500"></div>
+                    <div id="step-indicator-6" class="w-16 h-px bg-gray-300 transition-all duration-500"></div>
+                </div>
+                <p class="text-center text-xs text-gray-400 mt-6 tracking-[0.2em] uppercase font-light">
+                    <span id="current-step">1</span> de 6
+                </p>
+            </div>
+
+            <!-- Step 1: Género -->
+            <div class="step active" data-step="1">
+                <div class="text-center mb-20">
+                    <h2 class="font-serif text-5xl md:text-6xl font-light text-hermes-black mb-4 tracking-tight">
+                        ¿Para quién?
+                    </h2>
+                    <p class="text-base text-gray-500 font-light">
+                        Selecciona el género de la fragancia
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto mb-20">
+                    {% for genero in opciones.generos %}
+                        <label class="group relative cursor-pointer block">
+                            <input type="radio" name="genero" value="{{ genero }}" class="peer sr-only" required>
+                            <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center">
+                                <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300">{{ genero }}</span>
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Step 2: Intensidad -->
+            <div class="step" data-step="2">
+                <div class="text-center mb-20">
+                    <h2 class="font-serif text-5xl md:text-6xl font-light text-hermes-black mb-4 tracking-tight">
+                        Intensidad
+                    </h2>
+                    <p class="text-base text-gray-500 font-light">
+                        ¿Qué concentración prefieres?
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto mb-20">
+                    <label class="group relative cursor-pointer block">
+                        <input type="radio" name="intensidad" value="" class="peer sr-only" checked>
+                        <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center">
+                            <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300">Todas</span>
+                        </div>
+                    </label>
+                    {% for intensidad in opciones.intensidades %}
+                        <label class="group relative cursor-pointer block">
+                            <input type="radio" name="intensidad" value="{{ intensidad }}" class="peer sr-only">
+                            <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center">
+                                <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300">{{ intensidad }}</span>
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Step 3: Familia -->
+            <div class="step" data-step="3">
+                <div class="text-center mb-20">
+                    <h2 class="font-serif text-5xl md:text-6xl font-light text-hermes-black mb-4 tracking-tight">
+                        Familia Olfativa
+                    </h2>
+                    <p class="text-base text-gray-500 font-light">
+                        Elige tu preferencia aromática
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-20">
+                    <label class="group relative cursor-pointer block">
+                        <input type="radio" name="familia" value="" class="peer sr-only" checked>
+                        <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center">
+                            <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300">Cualquiera</span>
+                        </div>
+                    </label>
+                    {% for familia in opciones.familias %}
+                        <label class="group relative cursor-pointer block">
+                            <input type="radio" name="familia" value="{{ familia }}" class="peer sr-only">
+                            <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center">
+                                <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300">{{ familia }}</span>
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Step 4: Ocasiones -->
+            <div class="step" data-step="4">
+                <div class="text-center mb-20">
+                    <h2 class="font-serif text-5xl md:text-6xl font-light text-hermes-black mb-4 tracking-tight">
+                        Ocasiones
+                    </h2>
+                    <p class="text-base text-gray-500 font-light">
+                        Selecciona todas las que apliquen
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-20">
+                    {% for ocasion in opciones.ocasiones %}
+                        <label class="group relative cursor-pointer block">
+                            <input type="checkbox" name="ocasiones" value="{{ ocasion }}" class="peer sr-only">
+                            <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center">
+                                <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase text-center transition-all duration-300">{{ ocasion }}</span>
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Step 5: Notas Preferidas -->
+            <div class="step" data-step="5">
+                <div class="text-center mb-20">
+                    <h2 class="font-serif text-5xl md:text-6xl font-light text-hermes-black mb-4 tracking-tight">
+                        Notas Deseadas
+                    </h2>
+                    <p class="text-base text-gray-500 font-light">
+                        ¿Qué aromas te atraen?
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-3 md:grid-cols-6 gap-3 max-w-5xl mx-auto mb-20">
+                    {% for nota in opciones.notas %}
+                        <label class="group relative cursor-pointer block">
+                            <input type="checkbox" name="notas_preferidas" value="{{ nota }}" class="peer sr-only">
+                            <div class="h-20 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center px-2">
+                                <span class="text-xs font-light text-gray-600 peer-checked:text-hermes-orange tracking-wide uppercase text-center transition-all duration-300">{{ nota }}</span>
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Step 6: Notas Rechazadas -->
+            <div class="step" data-step="6">
+                <div class="text-center mb-20">
+                    <h2 class="font-serif text-5xl md:text-6xl font-light text-hermes-black mb-4 tracking-tight">
+                        Notas a Evitar
+                    </h2>
+                    <p class="text-base text-gray-500 font-light">
+                        ¿Qué aromas prefieres excluir?
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-3 md:grid-cols-6 gap-3 max-w-5xl mx-auto mb-20">
+                    {% for nota in opciones.notas %}
+                        <label class="group relative cursor-pointer block">
+                            <input type="checkbox" name="notas_rechazadas" value="{{ nota }}" class="peer sr-only">
+                            <div class="h-20 border border-gray-300 bg-white hover:border-red-400 transition-all duration-300 peer-checked:border-red-500 peer-checked:bg-red-50 flex items-center justify-center px-2">
+                                <span class="text-xs font-light text-gray-600 peer-checked:text-red-600 tracking-wide uppercase text-center transition-all duration-300">{{ nota }}</span>
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-center items-center gap-10 pt-16">
+                <button type="button" id="prevBtn" class="px-10 py-3 text-xs font-light tracking-[0.2em] uppercase text-gray-400 hover:text-hermes-orange transition-all duration-300" style="display: none;">
+                    ← Anterior
+                </button>
+
+                <button type="button" id="nextBtn" class="px-14 py-4 text-xs font-light tracking-[0.2em] uppercase text-white bg-hermes-orange hover:bg-hermes-orange-dark transition-all duration-300">
+                    Siguiente →
+                </button>
+
+                <button type="submit" id="submitBtn" class="px-14 py-4 text-xs font-light tracking-[0.2em] uppercase text-white bg-hermes-orange hover:bg-hermes-orange-dark transition-all duration-300" style="display: none;">
+                    Descubrir
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+let currentStep = 1;
+const totalSteps = 6;
+
+function showStep(step) {
+    // Hide all steps
+    document.querySelectorAll('.step').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+    });
+
+    // Show current step with fade
+    const currentStepEl = document.querySelector(`.step[data-step="${step}"]`);
+    currentStepEl.style.display = 'block';
+    setTimeout(() => currentStepEl.classList.add('active'), 10);
+
+    // Update progress indicators
+    for (let i = 1; i <= totalSteps; i++) {
+        const indicator = document.getElementById(`step-indicator-${i}`);
+        if (i <= step) {
+            indicator.classList.add('bg-hermes-orange');
+            indicator.classList.remove('bg-gray-300');
+        } else {
+            indicator.classList.remove('bg-hermes-orange');
+            indicator.classList.add('bg-gray-300');
+        }
+    }
+
+    // Update step counter
+    document.getElementById('current-step').textContent = step;
+
+    // Update navigation buttons
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    if (step === 1) {
+        prevBtn.style.display = 'none';
+    } else {
+        prevBtn.style.display = 'block';
+    }
+
+    if (step === totalSteps) {
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'block';
+    } else {
+        nextBtn.style.display = 'block';
+        submitBtn.style.display = 'none';
+    }
+
+    // Scroll to top of section smoothly
+    document.getElementById('questionnaire').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+    if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+    }
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => {
+    if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+    }
+});
+
+// Add CSS for step transitions
+const style = document.createElement('style');
+style.textContent = `
+    .step {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .step.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+`;
+document.head.appendChild(style);
+
+// Initialize
+showStep(1);
+
+// Modal functions
+function showRegistrationModal() {
+    document.getElementById('registrationModal').classList.remove('hidden');
+}
+
+function closeRegistrationModal() {
+    document.getElementById('registrationModal').classList.add('hidden');
+}
+</script>
+{% endif %}
+
+{% endblock %}

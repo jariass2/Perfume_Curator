@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-luxury-gradient py-16">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-12">
+            <h1 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">
+                Mi Colección
+            </h1>
+            <p class="text-lg text-gray-400">
+                Personaliza tus preferencias y gestiona tus perfumes favoritos
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Preferences Form -->
+            <div class="lg:col-span-2 space-y-8">
+                <div class="bg-luxury-dark border border-luxury-border rounded-2xl p-8">
+                    <h2 class="font-serif text-2xl font-semibold text-white mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-3 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                        </svg>
+                        Preferencias
+                    </h2>
+
+                    <form method="POST" class="space-y-8">
+                        <!-- Gender -->
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Género Preferido</h3>
+                            <div class="grid grid-cols-3 gap-3">
+                                <label class="relative">
+                                    <input type="radio" name="genero" value="" class="peer sr-only" {% if not usuario.preferencias or not usuario.preferencias.genero %}checked{% endif %}>
+                                    <div class="p-3 rounded-xl border-2 border-luxury-border cursor-pointer hover:border-luxury-gold/50 transition-all peer-checked:border-luxury-gold peer-checked:bg-luxury-gold/5 text-center">
+                                        <span class="text-sm font-medium text-gray-300 peer-checked:text-luxury-gold">Cualquiera</span>
+                                    </div>
+                                </label>
+                                {% for genero in opciones.generos %}
+                                    <label class="relative">
+                                        <input type="radio" name="genero" value="{{ genero }}" class="peer sr-only" {% if usuario.preferencias and usuario.preferencias.genero == genero %}checked{% endif %}>
+                                        <div class="p-3 rounded-xl border-2 border-luxury-border cursor-pointer hover:border-luxury-gold/50 transition-all peer-checked:border-luxury-gold peer-checked:bg-luxury-gold/5 text-center">
+                                            <span class="text-sm font-medium text-gray-300 peer-checked:text-luxury-gold">{{ genero }}</span>
+                                        </div>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Intensity -->
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Intensidad Preferida</h3>
+                            <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+                                <label class="relative">
+                                    <input type="radio" name="intensidad" value="" class="peer sr-only" {% if not usuario.preferencias or not usuario.preferencias.intensidad %}checked{% endif %}>
+                                    <div class="p-3 rounded-xl border-2 border-luxury-border cursor-pointer hover:border-luxury-gold/50 transition-all peer-checked:border-luxury-gold peer-checked:bg-luxury-gold/5 text-center">
+                                        <span class="text-sm font-medium text-gray-300 peer-checked:text-luxury-gold">Todas</span>
+                                    </div>
+                                </label>
+                                {% for intensidad in opciones.intensidades %}
+                                    <label class="relative">
+                                        <input type="radio" name="intensidad" value="{{ intensidad }}" class="peer sr-only" {% if usuario.preferencias and usuario.preferencias.intensidad == intensidad %}checked{% endif %}>
+                                        <div class="p-3 rounded-xl border-2 border-luxury-border cursor-pointer hover:border-luxury-gold/50 transition-all peer-checked:border-luxury-gold peer-checked:bg-luxury-gold/5 text-center">
+                                            <span class="text-sm font-medium text-gray-300 peer-checked:text-luxury-gold">{{ intensidad }}</span>
+                                        </div>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Family -->
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Familia Olfativa</h3>
+                            <div class="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                                <label class="relative">
+                                    <input type="radio" name="familia" value="" class="peer sr-only" {% if not usuario.preferencias or not usuario.preferencias.familia %}checked{% endif %}>
+                                    <div class="p-3 rounded-xl border-2 border-luxury-border cursor-pointer hover:border-luxury-gold/50 transition-all peer-checked:border-luxury-gold peer-checked:bg-luxury-gold/5 text-center">
+                                        <span class="text-sm font-medium text-gray-300 peer-checked:text-luxury-gold">Cualquiera</span>
+                                    </div>
+                                </label>
+                                {% for familia in opciones.familias %}
+                                    <label class="relative">
+                                        <input type="radio" name="familia" value="{{ familia }}" class="peer sr-only" {% if usuario.preferencias and usuario.preferencias.familia == familia %}checked{% endif %}>
+                                        <div class="p-3 rounded-xl border-2 border-luxury-border cursor-pointer hover:border-luxury-gold/50 transition-all peer-checked:border-luxury-gold peer-checked:bg-luxury-gold/5 text-center">
+                                            <span class="text-sm font-medium text-gray-300 peer-checked:text-luxury-gold">{{ familia }}</span>
+                                        </div>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Occasions -->
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Ocasiones</h3>
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                                {% for ocasion in opciones.ocasiones %}
+                                    <label class="relative">
+                                        <input type="checkbox" name="ocasiones" value="{{ ocasion }}" class="peer sr-only" {% if usuario.preferencias and ocasion in usuario.preferencias.get('ocasiones', []) %}checked{% endif %}>
+                                        <div class="p-3 rounded-xl border-2 border-luxury-border cursor-pointer hover:border-luxury-gold/50 transition-all peer-checked:border-luxury-gold peer-checked:bg-luxury-gold/5 text-center">
+                                            <span class="text-sm font-medium text-gray-300 peer-checked:text-luxury-gold">{{ ocasion }}</span>
+                                        </div>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Preferred Notes -->
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Notas que te Gustan</h3>
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-2">
+                                {% for nota in opciones.notas %}
+                                    <label class="relative">
+                                        <input type="checkbox" name="notas_preferidas" value="{{ nota }}" class="peer sr-only" {% if usuario.preferencias and nota in usuario.preferencias.get('notas_preferidas', []) %}checked{% endif %}>
+                                        <div class="p-2 rounded-lg border-2 border-luxury-border cursor-pointer hover:border-luxury-gold/50 transition-all peer-checked:border-luxury-gold peer-checked:bg-luxury-gold/5 text-center">
+                                            <span class="text-xs font-medium text-gray-300 peer-checked:text-luxury-gold">{{ nota }}</span>
+                                        </div>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Rejected Notes -->
+                        <div>
+                            <h3 class="text-sm font-medium text-red-400 uppercase tracking-wider mb-4">Notas que Prefieres Evitar</h3>
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-2">
+                                {% for nota in opciones.notas %}
+                                    <label class="relative">
+                                        <input type="checkbox" name="notas_rechazadas" value="{{ nota }}" class="peer sr-only" {% if usuario.preferencias and nota in usuario.preferencias.get('notas_rechazadas', []) %}checked{% endif %}>
+                                        <div class="p-2 rounded-lg border-2 border-luxury-border cursor-pointer hover:border-red-500/50 transition-all peer-checked:border-red-500 peer-checked:bg-red-500/5 text-center">
+                                            <span class="text-xs font-medium text-gray-300 peer-checked:text-red-400">{{ nota }}</span>
+                                        </div>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="w-full flex items-center justify-center px-6 py-4 text-base font-semibold text-luxury-dark bg-gradient-to-r from-luxury-gold to-luxury-gold-light rounded-lg hover:shadow-lg hover:shadow-luxury-gold/20 transition-all duration-300 transform hover:-translate-y-0.5"
+                        >
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Guardar Preferencias
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column - Favorites & History -->
+            <div class="space-y-8">
+                <!-- User Info -->
+                <div class="bg-luxury-dark border border-luxury-border rounded-2xl p-6">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-luxury-gold to-luxury-gold-light flex items-center justify-center shadow-lg">
+                            <span class="text-luxury-dark font-serif font-bold text-2xl">
+                                {{ (usuario.nombre or usuario.email)[0]|upper }}
+                            </span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-white">
+                                {{ usuario.nombre or usuario.email }}
+                            </h3>
+                            <p class="text-sm text-gray-400">
+                                {{ usuario.email }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        Miembro desde: {{ usuario.creado_en[:10] if usuario.creado_en else 'Recientemente' }}
+                    </div>
+                </div>
+
+                <!-- Favorites -->
+                <div class="bg-luxury-dark border border-luxury-border rounded-2xl p-6">
+                    <h2 class="font-serif text-xl font-semibold text-white mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                        </svg>
+                        Mi Colección
+                        <span class="ml-2 px-2 py-1 text-xs font-medium text-luxury-dark bg-luxury-gold rounded-full">
+                            {{ favoritos|length if favoritos else 0 }}
+                        </span>
+                    </h2>
+
+                    {% if favoritos %}
+                    <div class="space-y-3 max-h-96 overflow-y-auto">
+                        {% for favorito in favoritos[:5] %}
+                        <a href="/perfume/{{ favorito.perfume.id }}" class="block group">
+                            <div class="flex items-center gap-3 p-3 rounded-xl bg-luxury-darker border border-luxury-border hover:border-luxury-gold/50 transition-all">
+                                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-luxury-gold/20 to-luxury-dark flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-medium text-white truncate group-hover:text-luxury-gold transition-colors">
+                                        {{ favorito.perfume.nombre }}
+                                    </div>
+                                    <div class="text-xs text-gray-400 truncate">
+                                        {{ favorito.perfume.marca }}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-8">
+                        <svg class="w-12 h-12 text-gray-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        <p class="text-sm text-gray-500 mb-4">
+                            Aún no tienes perfumes en tu colección
+                        </p>
+                        <a href="/resultados" class="inline-flex items-center text-sm font-medium text-luxury-gold hover:text-luxury-gold-light transition-colors">
+                            Explorar Colección
+                            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Search History -->
+                {% if historial %}
+                <div class="bg-luxury-dark border border-luxury-border rounded-2xl p-6">
+                    <h2 class="font-serif text-xl font-semibold text-white mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Historial
+                    </h2>
+
+                    <div class="space-y-3 max-h-64 overflow-y-auto">
+                        {% for busqueda in historial[:5] %}
+                        <div class="p-3 rounded-xl bg-luxury-darker border border-luxury-border">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-luxury-gold">
+                                    {{ busqueda.resultados_obtenidos }} resultados
+                                </span>
+                                <span class="text-xs text-gray-500">
+                                    {{ busqueda.fecha[:10] if busqueda.fecha else '' }}
+                                </span>
+                            </div>
+                            <div class="text-xs text-gray-400 truncate">
+                                {% if busqueda.criterios.genero %}
+                                    {{ busqueda.criterios.genero }}
+                                {% else %}
+                                    Cualquiera
+                                {% endif %}
+                                {% if busqueda.criterios.familia %}
+                                    • {{ busqueda.criterios.familia }}
+                                {% endif %}
+                                {% if busqueda.criterios.intensidad %}
+                                    • {{ busqueda.criterios.intensidad }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

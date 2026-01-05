@@ -333,6 +333,11 @@ function showStep(step) {
         nextBtn.style.display = 'block';
         submitBtn.style.display = 'none';
     }
+
+    // Aplicar filtrado de notas cuando se muestra el paso 5 o 6
+    if (step === 5 || step === 6) {
+        filtrarNotasPorFamilia();
+    }
 }
 
 document.getElementById('nextBtn').addEventListener('click', () => {
@@ -391,6 +396,124 @@ document.head.appendChild(style);
 
 // Initialize
 showStep(1);
+
+// Mapeo de familias olfativas y sus notas compatibles
+const notasPorFamilia = {
+    'Cítrica': ['Bergamota', 'Limón', 'Naranja', 'Lavanda', 'Romero'],
+    'Floral': ['Jazmín', 'Rosa', 'Lirio', 'Geranio', 'Bergamota', 'Vainilla', 'Ámbar'],
+    'Amaderada': ['Sándalo', 'Cedro', 'Vetiver', 'Pachuli', 'Cuero', 'Bergamota', 'Pimienta'],
+    'Oriental': ['Vainilla', 'Ámbar', 'Almizcle', 'Clavo', 'Canela', 'Cardamomo', 'Pachuli', 'Rosa'],
+    'Aromática': ['Lavanda', 'Romero', 'Pimienta', 'Cardamomo', 'Geranio', 'Bergamota', 'Cedro']
+};
+
+// Filtrar notas según familia seleccionada
+function filtrarNotasPorFamilia() {
+    // Obtener familia seleccionada
+    const familiaInput = document.querySelector('input[name="familia"]:checked');
+    const familiaSeleccionada = familiaInput ? familiaInput.value : '';
+
+    // Si no hay familia o es "Cualquiera" (valor vacío), mostrar todas las notas
+    const mostrarTodas = !familiaSeleccionada || familiaSeleccionada === '';
+
+    // Filtrar notas en "Notas Deseadas" (paso 5)
+    document.querySelectorAll('input[name="notas_preferidas"]').forEach(input => {
+        const nota = input.value;
+        const label = input.closest('label');
+
+        if (mostrarTodas || notasPorFamilia[familiaSeleccionada]?.includes(nota)) {
+            // Mostrar nota compatible
+            label.style.display = 'block';
+        } else {
+            // Ocultar nota no compatible
+            label.style.display = 'none';
+            // Deseleccionar si estaba seleccionada
+            if (input.checked) {
+                input.checked = false;
+                sincronizarNotas(); // Actualizar sincronización
+            }
+        }
+    });
+
+    // Filtrar notas en "Notas a Evitar" (paso 6)
+    document.querySelectorAll('input[name="notas_rechazadas"]').forEach(input => {
+        const nota = input.value;
+        const label = input.closest('label');
+
+        if (mostrarTodas || notasPorFamilia[familiaSeleccionada]?.includes(nota)) {
+            // Mostrar nota compatible
+            label.style.display = 'block';
+        } else {
+            // Ocultar nota no compatible
+            label.style.display = 'none';
+            // Deseleccionar si estaba seleccionada
+            if (input.checked) {
+                input.checked = false;
+                sincronizarNotas(); // Actualizar sincronización
+            }
+        }
+    });
+}
+
+// Agregar listeners a los radio buttons de familia
+document.querySelectorAll('input[name="familia"]').forEach(radio => {
+    radio.addEventListener('change', filtrarNotasPorFamilia);
+});
+
+// Sincronizar notas preferidas y rechazadas para evitar inconsistencias
+function sincronizarNotas() {
+    // Obtener todas las notas seleccionadas como preferidas
+    const notasPreferidas = Array.from(
+        document.querySelectorAll('input[name="notas_preferidas"]:checked')
+    ).map(input => input.value);
+
+    // Obtener todas las notas seleccionadas como rechazadas
+    const notasRechazadas = Array.from(
+        document.querySelectorAll('input[name="notas_rechazadas"]:checked')
+    ).map(input => input.value);
+
+    // Deshabilitar notas preferidas en la lista de rechazadas
+    document.querySelectorAll('input[name="notas_rechazadas"]').forEach(input => {
+        const label = input.closest('label');
+        const div = label.querySelector('div');
+
+        if (notasPreferidas.includes(input.value)) {
+            input.disabled = true;
+            label.style.cursor = 'not-allowed';
+            label.style.opacity = '0.4';
+            div.style.pointerEvents = 'none';
+        } else {
+            input.disabled = false;
+            label.style.cursor = 'pointer';
+            label.style.opacity = '1';
+            div.style.pointerEvents = '';
+        }
+    });
+
+    // Deshabilitar notas rechazadas en la lista de preferidas
+    document.querySelectorAll('input[name="notas_preferidas"]').forEach(input => {
+        const label = input.closest('label');
+        const div = label.querySelector('div');
+
+        if (notasRechazadas.includes(input.value)) {
+            input.disabled = true;
+            label.style.cursor = 'not-allowed';
+            label.style.opacity = '0.4';
+            div.style.pointerEvents = 'none';
+        } else {
+            input.disabled = false;
+            label.style.cursor = 'pointer';
+            label.style.opacity = '1';
+            div.style.pointerEvents = '';
+        }
+    });
+}
+
+// Agregar listeners a los checkboxes de notas
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('input[name="notas_preferidas"], input[name="notas_rechazadas"]').forEach(checkbox => {
+        checkbox.addEventListener('change', sincronizarNotas);
+    });
+});
 </script>
 {% endif %}
 

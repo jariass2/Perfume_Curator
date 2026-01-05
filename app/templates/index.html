@@ -21,12 +21,12 @@
 
         <div class="flex flex-col items-center justify-center gap-8">
             {% if current_user.is_authenticated %}
-                <a href="#questionnaire" class="group inline-flex items-center justify-center px-12 py-4 text-xs font-light tracking-[0.2em] uppercase text-white bg-hermes-orange hover:bg-hermes-orange-dark transition-all duration-300">
+                <button onclick="scrollToQuestionnaire()" class="group inline-flex items-center justify-center px-12 py-4 text-xs font-light tracking-[0.2em] uppercase text-white bg-hermes-orange hover:bg-hermes-orange-dark transition-all duration-300">
                     Comenzar
                     <svg class="ml-3 w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
-                </a>
+                </button>
             {% else %}
                 <button onclick="showRegistrationModal()" class="group inline-flex items-center justify-center px-12 py-4 text-xs font-light tracking-[0.2em] uppercase text-white bg-hermes-orange hover:bg-hermes-orange-dark transition-all duration-300">
                     Comenzar
@@ -131,8 +131,8 @@
                     {% for genero in opciones.generos %}
                         <label class="group relative cursor-pointer block">
                             <input type="radio" name="genero" value="{{ genero }}" class="peer sr-only" required>
-                            <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center">
-                                <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300">{{ genero }}</span>
+                            <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center px-4">
+                                <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300 text-center">{{ genero }}</span>
                             </div>
                         </label>
                     {% endfor %}
@@ -153,15 +153,15 @@
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto mb-20">
                     <label class="group relative cursor-pointer block">
                         <input type="radio" name="intensidad" value="" class="peer sr-only" checked>
-                        <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center">
-                            <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300">Todas</span>
+                        <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center px-4">
+                            <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300 text-center">Todas</span>
                         </div>
                     </label>
                     {% for intensidad in opciones.intensidades %}
                         <label class="group relative cursor-pointer block">
                             <input type="radio" name="intensidad" value="{{ intensidad }}" class="peer sr-only">
-                            <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center">
-                                <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300">{{ intensidad }}</span>
+                            <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center px-4">
+                                <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300 text-center">{{ intensidad }}</span>
                             </div>
                         </label>
                     {% endfor %}
@@ -182,15 +182,15 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-20">
                     <label class="group relative cursor-pointer block">
                         <input type="radio" name="familia" value="" class="peer sr-only" checked>
-                        <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center">
-                            <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300">Cualquiera</span>
+                        <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center px-4">
+                            <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300 text-center">Cualquiera</span>
                         </div>
                     </label>
                     {% for familia in opciones.familias %}
                         <label class="group relative cursor-pointer block">
                             <input type="radio" name="familia" value="{{ familia }}" class="peer sr-only">
-                            <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center">
-                                <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300">{{ familia }}</span>
+                            <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center px-4">
+                                <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase transition-all duration-300 text-center">{{ familia }}</span>
                             </div>
                         </label>
                     {% endfor %}
@@ -212,7 +212,7 @@
                     {% for ocasion in opciones.ocasiones %}
                         <label class="group relative cursor-pointer block">
                             <input type="checkbox" name="ocasiones" value="{{ ocasion }}" class="peer sr-only">
-                            <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center">
+                            <div class="h-28 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center px-4">
                                 <span class="text-sm font-light text-gray-600 peer-checked:text-hermes-orange tracking-[0.15em] uppercase text-center transition-all duration-300">{{ ocasion }}</span>
                             </div>
                         </label>
@@ -235,7 +235,7 @@
                     {% for nota in opciones.notas %}
                         <label class="group relative cursor-pointer block">
                             <input type="checkbox" name="notas_preferidas" value="{{ nota }}" class="peer sr-only">
-                            <div class="h-20 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center px-2">
+                            <div class="h-20 border border-gray-300 bg-white hover:border-hermes-orange transition-all duration-300 peer-checked:border-hermes-orange peer-checked:bg-hermes-orange/5 flex items-center justify-center px-3">
                                 <span class="text-xs font-light text-gray-600 peer-checked:text-hermes-orange tracking-wide uppercase text-center transition-all duration-300">{{ nota }}</span>
                             </div>
                         </label>
@@ -258,7 +258,7 @@
                     {% for nota in opciones.notas %}
                         <label class="group relative cursor-pointer block">
                             <input type="checkbox" name="notas_rechazadas" value="{{ nota }}" class="peer sr-only">
-                            <div class="h-20 border border-gray-300 bg-white hover:border-red-400 transition-all duration-300 peer-checked:border-red-500 peer-checked:bg-red-50 flex items-center justify-center px-2">
+                            <div class="h-20 border border-gray-300 bg-white hover:border-red-400 transition-all duration-300 peer-checked:border-red-500 peer-checked:bg-red-50 flex items-center justify-center px-3">
                                 <span class="text-xs font-light text-gray-600 peer-checked:text-red-600 tracking-wide uppercase text-center transition-all duration-300">{{ nota }}</span>
                             </div>
                         </label>
@@ -333,13 +333,35 @@ function showStep(step) {
         nextBtn.style.display = 'block';
         submitBtn.style.display = 'none';
     }
-
-    // Scroll to top of section smoothly
-    document.getElementById('questionnaire').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 document.getElementById('nextBtn').addEventListener('click', () => {
     if (currentStep < totalSteps) {
+        // Validate current step before proceeding
+        const currentStepEl = document.querySelector(`.step[data-step="${currentStep}"]`);
+        const requiredInputs = currentStepEl.querySelectorAll('input[required]');
+
+        let isValid = true;
+        requiredInputs.forEach(input => {
+            if (input.type === 'radio') {
+                const radioGroup = currentStepEl.querySelectorAll(`input[name="${input.name}"]`);
+                const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+                if (!isChecked) {
+                    isValid = false;
+                }
+            } else if (input.type === 'checkbox') {
+                // Checkboxes are optional
+            } else if (!input.value) {
+                isValid = false;
+            }
+        });
+
+        if (!isValid) {
+            // Show validation message
+            alert('Por favor, selecciona una opción antes de continuar');
+            return;
+        }
+
         currentStep++;
         showStep(currentStep);
     }
@@ -369,8 +391,11 @@ document.head.appendChild(style);
 
 // Initialize
 showStep(1);
+</script>
+{% endif %}
 
-// Modal functions
+<script>
+// Modal functions (global)
 function showRegistrationModal() {
     document.getElementById('registrationModal').classList.remove('hidden');
 }
@@ -378,7 +403,14 @@ function showRegistrationModal() {
 function closeRegistrationModal() {
     document.getElementById('registrationModal').classList.add('hidden');
 }
+
+// Smooth scroll to questionnaire
+function scrollToQuestionnaire() {
+    const questionnaire = document.getElementById('questionnaire');
+    if (questionnaire) {
+        questionnaire.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
 </script>
-{% endif %}
 
 {% endblock %}

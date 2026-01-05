@@ -1,9 +1,17 @@
 from flask import Flask, g
 from flask_login import LoginManager
 from config import Config
+import os
 
 def create_app():
-    app = Flask(__name__)
+    # Configurar rutas correctas para templates y static
+    template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates'))
+    static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static'))
+
+    app = Flask(__name__,
+                template_folder=template_dir,
+                static_folder=static_dir,
+                static_url_path='/static')
     app.config.from_object(Config)
 
     from services import DatabaseService, RecommendationEngine

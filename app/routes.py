@@ -149,6 +149,7 @@ def resultados():
         preferencias.get('notas_rechazadas')
     ])
 
+
     # Si NO hay preferencias (acceso directo a Colección), mostrar TODOS los perfumes
     if not tiene_preferencias and request.method == 'GET':
         recomendaciones = db_service.get_vista_perfumes_completa()

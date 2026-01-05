@@ -132,43 +132,55 @@ class RecommendationEngine:
         try:
             # Inicializar feedback service si no existe
             if self.feedback_service is None and db:
-                self.feedback_service = UserFeedbackService(db)
+                try:
+                    self.feedback_service = UserFeedbackService(db)
+                except Exception as e:
+                    print(f"Warning: No se pudo inicializar UserFeedbackService: {e}")
+                    self.feedback_service = None
 
             # Obtener preferencias del usuario (explícitas + aprendidas)
-            if usuario_id:
+            # IMPORTANTE: NO sobrescribir las preferencias pasadas como parámetro
+            if usuario_id and not preferencias:
                 from models import Usuario
                 usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
                 if usuario:
-                    # Combinar preferencias explícitas con las aprendidas
+                    # Solo usar preferencias guardadas si NO se pasaron preferencias
                     preferencias = usuario.preferencias or {}
 
-                    if self.feedback_service:
-                        preferencias_aprendidas = self.feedback_service.obtener_preferencias_aprendidas(
-                            usuario_id, min_confianza=0.6
-                        )
+            # Enriquecer con preferencias aprendidas (solo si hay feedback service)
+            if usuario_id and self.feedback_service and preferencias:
+                try:
+                    preferencias_aprendidas = self.feedback_service.obtener_preferencias_aprendidas(
+                        usuario_id, min_confianza=0.6
+                    )
 
-                        # Enriquecer con preferencias aprendidas
-                        for tipo, valores in preferencias_aprendidas.items():
-                            if tipo == 'familia_preferida' and valores:
-                                # Si no hay preferencia explícita, usar la aprendida
-                                if not preferencias.get('familia'):
-                                    preferencias['familia'] = valores[0]['valor']
-                            elif tipo == 'marca_preferida':
-                                preferencias['marca_preferida'] = [v['valor'] for v in valores[:3]]
-                            elif tipo == 'intensidad_preferida' and valores:
-                                if not preferencias.get('intensidad'):
-                                    preferencias['intensidad'] = valores[0]['valor']
+                    # Enriquecer con preferencias aprendidas
+                    for tipo, valores in preferencias_aprendidas.items():
+                        if tipo == 'familia_preferida' and valores:
+                            # Si no hay preferencia explícita, usar la aprendida
+                            if not preferencias.get('familia'):
+                                preferencias['familia'] = valores[0]['valor']
+                        elif tipo == 'marca_preferida':
+                            preferencias['marca_preferida'] = [v['valor'] for v in valores[:3]]
+                        elif tipo == 'intensidad_preferida' and valores:
+                            if not preferencias.get('intensidad'):
+                                preferencias['intensidad'] = valores[0]['valor']
+                except Exception as e:
+                    print(f"Warning: Error obteniendo preferencias aprendidas, continuando sin ellas: {e}")
 
             if not preferencias:
                 # Si no hay preferencias, usar perfumes más populares
                 if self.feedback_service:
-                    populares = self.feedback_service.obtener_perfumes_populares(
-                        limite=limite, metrica='ctr'
-                    )
-                    if populares:
-                        perfumes = self.db_service.get_vista_perfumes_completa()
-                        ids_populares = [p['id'] for p in populares]
-                        return [p for p in perfumes if p['id'] in ids_populares][:limite]
+                    try:
+                        populares = self.feedback_service.obtener_perfumes_populares(
+                            limite=limite, metrica='ctr'
+                        )
+                        if populares:
+                            perfumes = self.db_service.get_vista_perfumes_completa()
+                            ids_populares = [p['id'] for p in populares]
+                            return [p for p in perfumes if p['id'] in ids_populares][:limite]
+                    except Exception as e:
+                        print(f"Warning: Error obteniendo perfumes populares, usando todos los perfumes: {e}")
 
                 perfumes = self.db_service.get_vista_perfumes_completa()
                 return perfumes[:limite]
@@ -199,19 +211,22 @@ class RecommendationEngine:
 
             # 2. Agregar recomendaciones colaborativas si hay usuario
             if usuario_id and self.feedback_service:
-                recomendaciones_colaborativas = self.feedback_service.obtener_recomendaciones_colaborativas(
-                    usuario_id, limite=5
-                )
+                try:
+                    recomendaciones_colaborativas = self.feedback_service.obtener_recomendaciones_colaborativas(
+                        usuario_id, limite=5
+                    )
 
-                # Dar boost a perfumes recomendados por usuarios similares
-                for item in perfumes_con_score:
-                    if item['perfume']['id'] in recomendaciones_colaborativas:
-                        bonus = 20
-                        item['score'] += bonus
-                        item['perfume']['recomendado_por_similares'] = True
-                        item['desglose']['usuarios_similares']['puntos'] = bonus
-                        item['desglose']['usuarios_similares']['bonus'] = True
-                        item['desglose']['usuarios_similares']['detalle'] = "Amado por usuarios con tus gustos"
+                    # Dar boost a perfumes recomendados por usuarios similares
+                    for item in perfumes_con_score:
+                        if item['perfume']['id'] in recomendaciones_colaborativas:
+                            bonus = 20
+                            item['score'] += bonus
+                            item['perfume']['recomendado_por_similares'] = True
+                            item['desglose']['usuarios_similares']['puntos'] = bonus
+                            item['desglose']['usuarios_similares']['bonus'] = True
+                            item['desglose']['usuarios_similares']['detalle'] = "Amado por usuarios con tus gustos"
+                except Exception as e:
+                    print(f"Warning: Error obteniendo recomendaciones colaborativas: {e}")
 
             perfumes_con_score.sort(key=lambda x: x['score'], reverse=True)
 

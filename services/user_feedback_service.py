@@ -235,6 +235,7 @@ class UserFeedbackService:
 
             return preferencias
         except Exception as e:
+            self.db.rollback()
             print(f"Error obteniendo preferencias aprendidas: {e}")
             return {}
 
@@ -335,6 +336,7 @@ class UserFeedbackService:
 
             return perfumes
         except Exception as e:
+            self.db.rollback()
             print(f"Error obteniendo perfumes populares: {e}")
             return []
 
@@ -476,5 +478,6 @@ class UserFeedbackService:
 
             return [row[0] for row in result]
         except Exception as e:
+            self.db.rollback()
             print(f"Error obteniendo recomendaciones colaborativas: {e}")
             return []

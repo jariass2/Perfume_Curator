@@ -312,8 +312,13 @@ function showStep(step) {
         }
     }
 
-    // Update step counter
-    document.getElementById('current-step').textContent = step;
+    // Update step counter with animation
+    const stepCounter = document.getElementById('current-step');
+    stepCounter.classList.add('updating');
+    setTimeout(() => {
+        stepCounter.textContent = step;
+        setTimeout(() => stepCounter.classList.remove('updating'), 300);
+    }, 150);
 
     // Update navigation buttons
     const prevBtn = document.getElementById('prevBtn');
@@ -379,23 +384,229 @@ document.getElementById('prevBtn').addEventListener('click', () => {
     }
 });
 
-// Add CSS for step transitions
+// Add CSS for enhanced step transitions
 const style = document.createElement('style');
 style.textContent = `
+    /* === ENHANCED QUESTIONNAIRE ANIMATIONS === */
+
+    /* Step Container Transitions */
     .step {
         opacity: 0;
-        transform: translateY(10px);
-        transition: opacity 0.5s ease, transform 0.5s ease;
+        transform: translateY(20px) scale(0.98);
+        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, transform;
     }
+
     .step.active {
         opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    /* Staggered Animation for Options */
+    .step.active label {
+        animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+    }
+
+    .step.active label:nth-child(1) { animation-delay: 0.05s; }
+    .step.active label:nth-child(2) { animation-delay: 0.1s; }
+    .step.active label:nth-child(3) { animation-delay: 0.15s; }
+    .step.active label:nth-child(4) { animation-delay: 0.2s; }
+    .step.active label:nth-child(5) { animation-delay: 0.25s; }
+    .step.active label:nth-child(6) { animation-delay: 0.3s; }
+    .step.active label:nth-child(7) { animation-delay: 0.35s; }
+    .step.active label:nth-child(8) { animation-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Progress Indicator Smooth Transitions */
+    [id^="step-indicator-"] {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: left;
+    }
+
+    [id^="step-indicator-"].bg-hermes-orange {
+        animation: progressGrow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes progressGrow {
+        from {
+            transform: scaleX(0);
+        }
+        to {
+            transform: scaleX(1);
+        }
+    }
+
+    /* Step Counter Animation */
+    #current-step {
+        display: inline-block;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #current-step.updating {
+        transform: scale(1.2);
+        color: #FF8C42;
+    }
+
+    /* Button Transitions */
+    #prevBtn, #nextBtn, #submitBtn {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #prevBtn:hover, #nextBtn:hover, #submitBtn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
+    }
+
+    #prevBtn:active, #nextBtn:active, #submitBtn:active {
         transform: translateY(0);
+    }
+
+    /* Selection Hover Effects */
+    .step label {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .step label:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Checkbox/Radio Selection Animation */
+    .step input[type="radio"]:checked ~ div,
+    .step input[type="checkbox"]:checked ~ div {
+        animation: selectPulse 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes selectPulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    /* Heading Fade In */
+    .step.active h2 {
+        animation: fadeInDown 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .step.active p {
+        animation: fadeInDown 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s backwards;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Note Cards Entrance Animation (Steps 5 & 6) */
+    .step[data-step="5"].active label,
+    .step[data-step="6"].active label {
+        animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    }
+
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Loading State for Submit Button */
+    #submitBtn.loading {
+        pointer-events: none;
+        opacity: 0.7;
+        position: relative;
+    }
+
+    #submitBtn.loading::after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 50%;
+        left: 50%;
+        margin-left: -8px;
+        margin-top: -8px;
+        border: 2px solid white;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Smooth opacity changes for buttons */
+    #prevBtn[style*="display: none"],
+    #nextBtn[style*="display: none"],
+    #submitBtn[style*="display: none"] {
+        animation: fadeOut 0.3s ease;
+    }
+
+    #prevBtn[style*="display: block"],
+    #nextBtn[style*="display: block"],
+    #submitBtn[style*="display: block"] {
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+    /* Reduce motion for users who prefer it */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
     }
 `;
 document.head.appendChild(style);
 
 // Initialize
 showStep(1);
+
+// Add loading state to form submission
+document.getElementById('perfumeForm').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.classList.add('loading');
+    submitBtn.textContent = 'Procesando...';
+});
 
 // Mapeo de familias olfativas y sus notas compatibles
 const notasPorFamilia = {

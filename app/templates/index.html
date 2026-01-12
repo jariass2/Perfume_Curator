@@ -436,17 +436,34 @@
 let currentStep = 1;
 const totalSteps = 9;
 
-function showStep(step) {
-    // Hide all steps
-    document.querySelectorAll('.step').forEach(s => {
-        s.classList.remove('active');
-        s.style.display = 'none';
-    });
+function showStep(step, direction = 'next') {
+    const steps = document.querySelectorAll('.step');
+    const currentStepEl = document.querySelector('.step.active');
 
-    // Show current step with fade
-    const currentStepEl = document.querySelector(`.step[data-step="${step}"]`);
-    currentStepEl.style.display = 'block';
-    setTimeout(() => currentStepEl.classList.add('active'), 10);
+    // Add exit animation to current step
+    if (currentStepEl) {
+        currentStepEl.classList.add(direction === 'next' ? 'exiting-left' : 'exiting-right');
+        currentStepEl.classList.remove('active');
+    }
+
+    // Wait for exit animation
+    setTimeout(() => {
+        // Hide all steps
+        steps.forEach(s => {
+            s.classList.remove('active', 'exiting-left', 'exiting-right', 'entering-left', 'entering-right');
+            s.style.display = 'none';
+        });
+
+        // Show and animate new step
+        const newStepEl = document.querySelector(`.step[data-step="${step}"]`);
+        newStepEl.style.display = 'block';
+        newStepEl.classList.add(direction === 'next' ? 'entering-right' : 'entering-left');
+
+        setTimeout(() => {
+            newStepEl.classList.add('active');
+            newStepEl.classList.remove('entering-left', 'entering-right');
+        }, 10);
+    }, 500); // Duration of exit animation
 
     // Update progress indicators
     for (let i = 1; i <= totalSteps; i++) {
@@ -521,39 +538,118 @@ document.getElementById('nextBtn').addEventListener('click', () => {
         }
 
         currentStep++;
-        showStep(currentStep);
+        showStep(currentStep, 'next');
     }
 });
 
 document.getElementById('prevBtn').addEventListener('click', () => {
     if (currentStep > 1) {
         currentStep--;
-        showStep(currentStep);
+        showStep(currentStep, 'prev');
     }
 });
 
 // Add CSS for enhanced step transitions
 const style = document.createElement('style');
 style.textContent = `
-    /* === ENHANCED QUESTIONNAIRE ANIMATIONS === */
+    /* === ENHANCED QUESTIONNAIRE ANIMATIONS WITH AIR EFFECT === */
 
-    /* Step Container Transitions */
+    /* Step Container Base Transitions */
     .step {
         opacity: 0;
-        transform: translateY(20px) scale(0.98);
-        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-                    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        will-change: opacity, transform;
+        transform: translateX(0) scale(1);
+        transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                    filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, transform, filter;
     }
 
     .step.active {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateX(0) scale(1);
+        filter: blur(0px);
     }
 
-    /* Staggered Animation for Options */
+    /* Exit Animations - Air Blowing Effect */
+    .step.exiting-left {
+        animation: blowAwayLeft 0.5s cubic-bezier(0.6, 0, 0.8, 0.2) forwards;
+    }
+
+    .step.exiting-right {
+        animation: blowAwayRight 0.5s cubic-bezier(0.6, 0, 0.8, 0.2) forwards;
+    }
+
+    @keyframes blowAwayLeft {
+        0% {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            filter: blur(0px);
+        }
+        40% {
+            opacity: 0.6;
+            filter: blur(2px);
+        }
+        100% {
+            opacity: 0;
+            transform: translateX(-120px) scale(0.92);
+            filter: blur(8px);
+        }
+    }
+
+    @keyframes blowAwayRight {
+        0% {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            filter: blur(0px);
+        }
+        40% {
+            opacity: 0.6;
+            filter: blur(2px);
+        }
+        100% {
+            opacity: 0;
+            transform: translateX(120px) scale(0.92);
+            filter: blur(8px);
+        }
+    }
+
+    /* Enter Animations - Arriving with Air */
+    .step.entering-left {
+        opacity: 0;
+        transform: translateX(-120px) scale(0.92);
+        filter: blur(8px);
+    }
+
+    .step.entering-right {
+        opacity: 0;
+        transform: translateX(120px) scale(0.92);
+        filter: blur(8px);
+    }
+
+    .step.entering-left.active,
+    .step.entering-right.active {
+        animation: arriveFromSide 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes arriveFromSide {
+        0% {
+            opacity: 0;
+            filter: blur(8px);
+        }
+        60% {
+            opacity: 0.8;
+            filter: blur(2px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            filter: blur(0px);
+        }
+    }
+
+    /* Staggered Animation for Options - Arriving with Air */
     .step.active label {
-        animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+        animation: floatInWithAir 0.7s cubic-bezier(0.2, 0.9, 0.3, 1) backwards;
     }
 
     .step.active label:nth-child(1) { animation-delay: 0.05s; }
@@ -564,15 +660,57 @@ style.textContent = `
     .step.active label:nth-child(6) { animation-delay: 0.3s; }
     .step.active label:nth-child(7) { animation-delay: 0.35s; }
     .step.active label:nth-child(8) { animation-delay: 0.4s; }
+    .step.active label:nth-child(9) { animation-delay: 0.45s; }
+    .step.active label:nth-child(10) { animation-delay: 0.5s; }
+    .step.active label:nth-child(11) { animation-delay: 0.55s; }
+    .step.active label:nth-child(12) { animation-delay: 0.6s; }
 
-    @keyframes fadeInUp {
-        from {
+    @keyframes floatInWithAir {
+        0% {
             opacity: 0;
-            transform: translateY(15px);
+            transform: translateX(-30px) translateY(15px) scale(0.9);
+            filter: blur(4px);
         }
-        to {
+        50% {
+            opacity: 0.5;
+            filter: blur(1px);
+        }
+        100% {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(0) translateY(0) scale(1);
+            filter: blur(0px);
+        }
+    }
+
+    /* Exit animation for options */
+    .step.exiting-left label,
+    .step.exiting-right label {
+        animation: floatAwayWithAir 0.4s cubic-bezier(0.6, 0, 0.8, 0.2) forwards;
+    }
+
+    .step.exiting-left label:nth-child(1),
+    .step.exiting-right label:nth-child(1) { animation-delay: 0s; }
+    .step.exiting-left label:nth-child(2),
+    .step.exiting-right label:nth-child(2) { animation-delay: 0.02s; }
+    .step.exiting-left label:nth-child(3),
+    .step.exiting-right label:nth-child(3) { animation-delay: 0.04s; }
+    .step.exiting-left label:nth-child(4),
+    .step.exiting-right label:nth-child(4) { animation-delay: 0.06s; }
+    .step.exiting-left label:nth-child(5),
+    .step.exiting-right label:nth-child(5) { animation-delay: 0.08s; }
+    .step.exiting-left label:nth-child(6),
+    .step.exiting-right label:nth-child(6) { animation-delay: 0.1s; }
+
+    @keyframes floatAwayWithAir {
+        0% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0px);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.8);
+            filter: blur(3px);
         }
     }
 

@@ -133,7 +133,10 @@ def resultados():
         'familia': request.form.get('familia') or session.get('familia'),
         'ocasiones': request.form.getlist('ocasiones') or session.get('ocasiones', []),
         'notas_preferidas': request.form.getlist('notas_preferidas') or session.get('notas_preferidas', []),
-        'notas_rechazadas': request.form.getlist('notas_rechazadas') or session.get('notas_rechazadas', [])
+        'notas_rechazadas': request.form.getlist('notas_rechazadas') or session.get('notas_rechazadas', []),
+        'edad': request.form.get('edad') or session.get('edad'),
+        'clima': request.form.get('clima') or session.get('clima'),
+        'tipo_piel': request.form.get('tipo_piel') or session.get('tipo_piel')
     }
 
     if request.method == 'POST':
@@ -146,7 +149,10 @@ def resultados():
         preferencias.get('familia'),
         preferencias.get('ocasiones'),
         preferencias.get('notas_preferidas'),
-        preferencias.get('notas_rechazadas')
+        preferencias.get('notas_rechazadas'),
+        preferencias.get('edad'),
+        preferencias.get('clima'),
+        preferencias.get('tipo_piel')
     ])
 
 

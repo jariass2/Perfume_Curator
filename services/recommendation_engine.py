@@ -19,6 +19,9 @@ class RecommendationEngine:
             'notas_preferidas': {'puntos': 0, 'max': 25, 'match': False, 'detalle': ''},
             'notas_rechazadas': {'puntos': 0, 'max': 0, 'penalizacion': 0, 'detalle': ''},
             'popularidad': {'puntos': 0, 'max': 10, 'rating': 0, 'detalle': ''},
+            'edad': {'puntos': 0, 'max': 8, 'match': False, 'detalle': ''},
+            'clima': {'puntos': 0, 'max': 10, 'match': False, 'detalle': ''},
+            'tipo_piel': {'puntos': 0, 'max': 7, 'match': False, 'detalle': ''},
             'marca_favorita': {'puntos': 0, 'max': 0, 'bonus': False, 'detalle': ''},
             'usuarios_similares': {'puntos': 0, 'max': 0, 'bonus': False, 'detalle': ''}
         }
@@ -123,6 +126,99 @@ class RecommendationEngine:
             desglose['popularidad']['puntos'] = round(puntos, 1)
             desglose['popularidad']['rating'] = rating
             desglose['popularidad']['detalle'] = f"Valoración: {rating}/5.0"
+            score += puntos
+
+        # Edad (8 puntos max) - Sofisticación según rango etario
+        if 'edad' in preferencias and preferencias['edad']:
+            # Mapeo de familias y notas según edad
+            edad_familia_map = {
+                '18-25': {'familias': ['Cítrica', 'Aromática', 'Floral'], 'intensidades': ['Suave', 'Media']},
+                '26-35': {'familias': ['Floral', 'Aromática', 'Amaderada'], 'intensidades': ['Media', 'Fuerte']},
+                '36-45': {'familias': ['Amaderada', 'Oriental', 'Floral'], 'intensidades': ['Media', 'Fuerte']},
+                '46-55': {'familias': ['Oriental', 'Amaderada', 'Floral'], 'intensidades': ['Fuerte']},
+                '56+': {'familias': ['Oriental', 'Amaderada'], 'intensidades': ['Fuerte']}
+            }
+
+            edad_prefs = edad_familia_map.get(preferencias['edad'], {})
+            puntos = 0
+
+            if perfume['familia'] in edad_prefs.get('familias', []):
+                puntos += 5
+            if perfume['intensidad'] in edad_prefs.get('intensidades', []):
+                puntos += 3
+
+            if puntos > 0:
+                desglose['edad']['match'] = True
+                desglose['edad']['detalle'] = f"Adecuado para {preferencias['edad']} años"
+            else:
+                desglose['edad']['detalle'] = f"Perfil para {preferencias['edad']}"
+
+            desglose['edad']['puntos'] = puntos
+            score += puntos
+
+        # Clima (10 puntos max) - Adaptación al entorno
+        if 'clima' in preferencias and preferencias['clima']:
+            # Mapeo de familias adecuadas por clima
+            clima_familia_map = {
+                'tropical': ['Cítrica', 'Aromática'],  # Ligeras, frescas
+                'mediterraneo': ['Aromática', 'Floral', 'Cítrica'],
+                'templado': ['Floral', 'Amaderada', 'Aromática'],
+                'frio-seco': ['Amaderada', 'Oriental'],  # Cálidas, intensas
+                'frio-humedo': ['Oriental', 'Amaderada', 'Floral']
+            }
+
+            # Ajuste de intensidad por clima
+            clima_intensidad_map = {
+                'tropical': ['Suave', 'Media'],  # Evitar muy fuerte en calor
+                'mediterraneo': ['Media', 'Fuerte'],
+                'templado': ['Suave', 'Media', 'Fuerte'],
+                'frio-seco': ['Fuerte'],  # Perfumes potentes
+                'frio-humedo': ['Media', 'Fuerte']
+            }
+
+            familias_adecuadas = clima_familia_map.get(preferencias['clima'], [])
+            intensidades_adecuadas = clima_intensidad_map.get(preferencias['clima'], [])
+
+            puntos = 0
+            if perfume['familia'] in familias_adecuadas:
+                puntos += 6
+            if perfume['intensidad'] in intensidades_adecuadas:
+                puntos += 4
+
+            if puntos >= 6:
+                desglose['clima']['match'] = True
+                desglose['clima']['detalle'] = f"Ideal para clima {preferencias['clima']}"
+            elif puntos > 0:
+                desglose['clima']['detalle'] = f"Compatible con clima {preferencias['clima']}"
+            else:
+                desglose['clima']['detalle'] = f"Mejor para otros climas"
+
+            desglose['clima']['puntos'] = puntos
+            score += puntos
+
+        # Tipo de Piel (7 puntos max) - Longevidad y proyección
+        if 'tipo_piel' in preferencias and preferencias['tipo_piel']:
+            # Mapeo de intensidades recomendadas por tipo de piel
+            piel_intensidad_map = {
+                'muy-seca': ['Fuerte'],  # Necesita concentración alta
+                'seca': ['Media', 'Fuerte'],  # Mejor con EDP+
+                'normal': ['Suave', 'Media', 'Fuerte'],  # Flexible
+                'mixta': ['Media', 'Fuerte'],  # Buena retención
+                'grasa': ['Suave', 'Media']  # Evitar saturar
+            }
+
+            intensidades_ideales = piel_intensidad_map.get(preferencias['tipo_piel'], [])
+
+            puntos = 0
+            if perfume['intensidad'] in intensidades_ideales:
+                puntos = 7
+                desglose['tipo_piel']['match'] = True
+                desglose['tipo_piel']['detalle'] = f"Óptimo para piel {preferencias['tipo_piel']}"
+            else:
+                puntos = 3  # Puntos parciales
+                desglose['tipo_piel']['detalle'] = f"Funciona con piel {preferencias['tipo_piel']}"
+
+            desglose['tipo_piel']['puntos'] = puntos
             score += puntos
 
         return round(score, 2), desglose

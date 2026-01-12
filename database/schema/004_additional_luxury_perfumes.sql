@@ -21,7 +21,7 @@ INSERT INTO familias_olfativas (nombre, descripcion) VALUES
 ('Gourmand', 'Dulce y comestible. Notas de caramelo, chocolate, café, vainilla.')
 ON CONFLICT (nombre) DO NOTHING;
 
--- Notas Olfativas Adicionales
+-- Notas Olfativas Adicionales (sin Gourmand primero)
 INSERT INTO notas_olfativas (nombre, categoria, familia_id) VALUES
 -- Notas de salida adicionales
 ('Azafrán', 'nota_salida', 4),
@@ -47,13 +47,26 @@ INSERT INTO notas_olfativas (nombre, categoria, familia_id) VALUES
 ('Musgo de Roble', 'nota_fondo', 3),
 ('Cedro Atlas', 'nota_fondo', 3),
 ('Tonka', 'nota_fondo', 4),
-('Haba Tonka', 'nota_fondo', 6),
 ('Resina de Abeto', 'nota_fondo', 3),
 ('Benzoína', 'nota_fondo', 4),
-('Guayaco', 'nota_fondo', 3),
-('Chocolate', 'nota_fondo', 6),
-('Caramelo', 'nota_fondo', 6),
-('Azúcar', 'nota_fondo', 6)
+('Guayaco', 'nota_fondo', 3)
+ON CONFLICT (nombre) DO NOTHING;
+
+-- Notas Gourmand (requieren que familia Gourmand exista)
+INSERT INTO notas_olfativas (nombre, categoria, familia_id)
+SELECT 'Haba Tonka', 'nota_fondo', id FROM familias_olfativas WHERE nombre = 'Gourmand'
+ON CONFLICT (nombre) DO NOTHING;
+
+INSERT INTO notas_olfativas (nombre, categoria, familia_id)
+SELECT 'Chocolate', 'nota_fondo', id FROM familias_olfativas WHERE nombre = 'Gourmand'
+ON CONFLICT (nombre) DO NOTHING;
+
+INSERT INTO notas_olfativas (nombre, categoria, familia_id)
+SELECT 'Caramelo', 'nota_fondo', id FROM familias_olfativas WHERE nombre = 'Gourmand'
+ON CONFLICT (nombre) DO NOTHING;
+
+INSERT INTO notas_olfativas (nombre, categoria, familia_id)
+SELECT 'Azúcar', 'nota_fondo', id FROM familias_olfativas WHERE nombre = 'Gourmand'
 ON CONFLICT (nombre) DO NOTHING;
 
 -- PERFUMES HERMÈS
@@ -154,7 +167,7 @@ INSERT INTO perfume_notas (perfume_id, nota_id) VALUES
 
 -- Oud Alezan (17) - Hermès
 INSERT INTO perfume_notas (perfume_id, nota_id) VALUES
-(17, 43, (17, 21), (17, 19);
+(17, 43), (17, 21), (17, 19);
 
 -- Barénia (18) - Hermès
 INSERT INTO perfume_notas (perfume_id, nota_id) VALUES
@@ -265,7 +278,7 @@ INSERT INTO perfume_notas (perfume_id, nota_id) VALUES
 (44, 27), (44, 42), (44, 19), (44, 18);
 
 -- Infusion d'Iris (45) - Prada
-INSERT INTO perfumes_notas (perfume_id, nota_id) VALUES
+INSERT INTO perfume_notas (perfume_id, nota_id) VALUES
 (45, 36), (45, 26), (45, 15);
 
 -- Uomo Intense (46) - Valentino
